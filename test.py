@@ -2,12 +2,12 @@ import sklearn.datasets, numpy as np, NanoNeuralNetwork as nnn, matplotlib.pyplo
 
 n_samples = 100000
 n_features = 20
-n_classes = 1
+n_classes = 2
 train_pct = 0.98
 dev_pct = 0.01
 test_pct = 0.01
-iterations = 2500
-layers = [n_features, 5, 3, n_classes]
+iterations = 1500
+layers = [n_features, 5, 3, int(np.ceil(np.log2(n_classes)))]
 random_state = 1
 
 samples, labels = sklearn.datasets.make_classification(n_samples=n_samples, n_features=n_features, n_classes=n_classes, random_state=random_state)
@@ -35,3 +35,6 @@ ax.set_xlabel("Iterations")
 ax.set_ylabel("Cost")
 ax.set_ylim([0, 1])
 plt.show()
+
+accuracy, Yp = model.test(test_samples, test_labels)
+print(f"accuracy = {accuracy}")

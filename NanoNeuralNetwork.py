@@ -68,7 +68,7 @@ class NanoNeuralNetwork:
 
         for w, a, z, act_fn  in reversed(list(zip(self.W, A[:-1], Z[:-1], self.activation_functions))):
             delta_W = [np.dot(delta_Z.T, a)] + delta_W
-            delta_B = [np.sum(delta_Z, axis=1, keepdims=True)] + delta_B
+            delta_B = [np.sum(delta_Z, axis=0, keepdims=True)] + delta_B
             delta_Z = np.dot(delta_Z, w) * act_fn(z, derivative=True) if z is not None else None
 
         return delta_W, delta_B
@@ -135,12 +135,12 @@ class NanoNeuralNetwork:
         accuracy     - Accuracy of the neural network model against the test dataset
         Yp           - Output layer result matrix produced by the neural network model
 
-        If the output layer contains more than one output, this will produce the index of the output vector that has the highest value.
+        The output layer vector values will be rounded to 0 or 1.
         """
 
         A, Z = self.forward_propagation(test_samples)
-        Yp = np.argmax([A[-1]], 2)
-        accuracy = np.sum(Yp == test_labels) / test_labels.shape[1]
+        Yp = np.round(A[-1])
+        accuracy = np.sum(Yp == test_labels) / test_labels.shape[0]
         return (accuracy, Yp)
 
     def __repr__(self):
