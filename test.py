@@ -28,6 +28,9 @@ test_samples, test_labels = samples[test_sample_start:], labels[test_sample_star
 model = nnn.NanoNeuralNetwork(layers=layers)
 costs = model.train(train_samples, train_labels, iterations=iterations)
 
+accuracy, Yp = model.test(test_samples, test_labels)
+print(f"accuracy = {accuracy*100}%")
+
 fig, ax = plt.subplots()
 ax.plot(costs)
 ax.set_title("Cost vs Iteration while Training the Neural Network Model")
@@ -35,6 +38,3 @@ ax.set_xlabel("Iterations")
 ax.set_ylabel("Cost")
 ax.set_ylim([0, 1])
 plt.show()
-
-accuracy, Yp = model.test(test_samples, test_labels)
-print(f"accuracy = {accuracy}")
