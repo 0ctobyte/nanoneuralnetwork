@@ -2,16 +2,17 @@ import sklearn.datasets, numpy as np, NanoNeuralNetwork as nnn, matplotlib.pyplo
 
 n_samples = 100000
 n_features = 20
-n_classes = 2
+n_classes = 3
+n_informative = n_classes
 train_pct = 0.98
 dev_pct = 0.01
 test_pct = 0.01
 iterations = 1500
-layers = [n_features, 5, 3, int(np.ceil(np.log2(n_classes)))]
+layers = [n_features, 5, 3, 1 if n_classes <= 2 else n_classes]
 random_state = 1
 
-samples, labels = sklearn.datasets.make_classification(n_samples=n_samples, n_features=n_features, n_classes=n_classes, random_state=random_state)
-labels = np.reshape(labels, (labels.shape[0], 1))
+samples, labels = sklearn.datasets.make_classification(n_samples=n_samples, n_features=n_features, n_informative=n_informative, n_classes=n_classes, random_state=random_state)
+labels = np.reshape(labels, (labels.shape[0], 1)) if layers[-1] == 1 else np.identity(layers[-1])[labels]
 
 n_train_samples = int(n_samples * train_pct)
 n_dev_samples = int(n_samples * dev_pct)
@@ -36,5 +37,5 @@ ax.plot(costs)
 ax.set_title("Cost vs Iteration while Training the Neural Network Model")
 ax.set_xlabel("Iterations")
 ax.set_ylabel("Cost")
-ax.set_ylim([0, 1])
+ax.set_ylim([0, int(np.ceil(np.max(costs)))])
 plt.show()

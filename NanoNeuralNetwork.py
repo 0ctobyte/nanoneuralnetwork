@@ -83,7 +83,7 @@ class NanoNeuralNetwork:
         """
 
         m = Y.shape[0]
-        return np.squeeze((-1 / m) * (np.dot(Y.T, np.log(Yp)) + np.dot((1 - Y).T, np.log(1 - Yp))))
+        return np.squeeze((-1 / m) * (np.sum(Y * np.log(Yp) + (1 - Y) * np.log(1 - Yp))))
 
     def train(self, train_samples, train_labels, iterations=1000):
         """
@@ -135,12 +135,14 @@ class NanoNeuralNetwork:
         accuracy     - Accuracy of the neural network model against the test dataset
         Yp           - Output layer result matrix produced by the neural network model
 
-        The output layer vector values will be rounded to 0 or 1.
+        For single output networks, the output will be rounded to 0 or 1. For output vectors, the index of the output vector with the highest value will be used as the result.
         """
 
         A, Z = self.forward_propagation(test_samples)
-        Yp = np.round(A[-1])
-        accuracy = np.sum(Yp == test_labels) / test_labels.shape[0]
+        Yi = np.round(A[-1]) if self.layers[-1] == 1 else np.argmax(A[-1], axis=1)
+        Yp = Yi if self.layers[-1] == 1 else np.identity(self.layers[-1])[Yi]
+        Y = test_labels if test_labels.shape[1] == 1 else np.argmax(test_labels, axis=1)
+        accuracy = np.sum(Yi == Y) / test_labels.shape[0]
         return (accuracy, Yp)
 
     def __repr__(self):
